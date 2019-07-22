@@ -1,9 +1,10 @@
 import React from 'react';
+import ReactThunk from 'redux-thunk'
 import ReactDOM from 'react-dom';
 import './index.css';
 
 
-import { createStore, combineReducers } from './redux/index'
+import { createStore, combineReducers ,applyMiddleware} from 'redux'
 function foo(state=0,action){
   switch(action.type){
     case 'ADD':
