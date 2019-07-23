@@ -1,38 +1,44 @@
 // virtual DOM
+
+const ATTRS = 'ATTRS'
+const TEXT = 'TEXT'
+const REMOVE = 'REMOVE'
+const REPLACE = 'REPLACE'
+
 function diff(oldTree, newTree) {
-  let patches = {};
+  let patches = {};   //序号，在这个结点上的修改
   let index = 0; //第几个节点的改变
   //递归遍历树
   walk(oldTree, newTree, index, patches);
   return patches;
 }
 function walk (oldNode, newNode, index, patches) {
-  // props, children 
-  let current = []; //补丁的数组
-  if (!newNode) {
-    current.push({ type: 'REMOVE', index }); 
-  } else if (isString(oldNode) && isString(newNode)) {
-    //文本结点
-    if (oldNode !== newNode) {
-      current.push({ type: 'TEXT', text: newNode });
+  let current = []  //当前结点的补丁
+  
+  if(!newNode){
+    current.push({ type:REMOVE, index})
+  }else if(isString(oldNode) && isString(newNode)){
+    if(oldNode !== newNode){
+      current.push({type:TEXT,text:newNode})
     }
-  } else if (oldNode.type === newNode.type) {
-    // 属性， 子节点
-    //属性是否修改
-    let attr = diffAttr(oldNode.props, newNode.props);
-    if (Object.keys(attr).length > 0) {
-      current.push({type: 'ATTR', attr})
+  }else if(oldNode.type === newNode.type){
+    let attrs = diffAttr(oldNode.props,newNode.props)
+    if(Object.keys(attrs).length>0){
+      current.push({type:ATTRS,attrs})
     }
-    // walk9
-    diffChildren(oldNode.children, newNode.children, patches);
-  } else {
-    //节点 type不一样
-    current.push({type: 'REPLACE', newNode});
+    diffChildren(oldNode.children,newNode.children,patches)
+  }else{
+    current.push({type: REPLACE, newNode});
   }
 
-  if (current.length) {
+  if(!oldNode){
+    current.push({type:REPLACE,newNode})
+  }
+
+  if(current.length){
     patches[index] = current
   }
+
 }
 
 function isString(obj) {
@@ -60,8 +66,5 @@ function diffChildren(oldChildren, newChildren, patches) {
   })
 }
 
-function doPatch(node, patches) {
-  
-}
 
 export default diff;

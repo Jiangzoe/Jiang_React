@@ -1,13 +1,31 @@
-import { createElement, render, renderDOM } from './element'
-
+import { createElement, render, renderDOM } from './element';
 // ul.list>li.item*3
-let virtualDOM = createElement('ul',{
-  class:'list'
-},[createElement('li',{class:'item'},['周杰伦']),
-createElement('li',{class:'item'},['张悬']),
-createElement('li',{class:'item'},['郭顶'])]) ;
+import diff from './diff';
+import patch from './patch';
 
-console.log(virtualDOM)
+let virtualDOM = createElement('ul',  {
+  class: 'list-group'
+}, [
+  createElement('li', { class: 'item' }, ['a']),
+  createElement('li', { class: 'item' }, ['b']),
+  createElement('li', { class: 'item' }, ['c']),
+])
 
-let el = render(virtualDOM)
-renderDOM(el,document.getElementById('root'))
+let virtualDOM2 = createElement('ul',  {
+  class: 'list-group'
+}, [
+  createElement('li', { class: 'item' }, ['1']),
+  createElement('li', { class: 'item' }, ['b']),
+  createElement('p',{class:'page'},[
+    createElement('a',{class:'link',href:'http://www/so/com/',target:'_blank'},['so'])
+  ]),
+  createElement('li', { class: 'item current' }, ['okk']),
+])
+
+let el = render(virtualDOM);
+renderDOM(el, document.getElementById('root'));
+
+let patches = diff(virtualDOM,virtualDOM2)
+
+console.log(patches)
+patch(el,patches)
